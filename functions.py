@@ -38,7 +38,7 @@ def remove_whitespace_lr(x):
         return x
 
 def fill_null_values(data):
-    return data.fillna(method='ffill')
+    return data.ffill()
 
 def numeric_age(data):
     return [int(xi[0])*12 + int(xi[3]) for xi in [x.split() for x in fill_null_values(data)]]
@@ -70,7 +70,7 @@ f8 = lambda x: 50 if x<= 30 else 0
 fx1 = lambda x,y,z : [xi / (yi + zi) for xi,yi,zi in zip(x,y,z)]
 fx2 = lambda x,y,z : [xi / (yi + zi) for xi,yi,zi in zip(x,y,z)]
 fx3 = lambda x,y,z : [xi / (yi + zi) for xi,yi,zi in zip(x,y,z)]
-fx4 = lambda x,y : [xi/ 12 / zi for xi,yi,zi in zip(x,y)]
+fx4 = lambda x,y : [xi/ 12 / yi for xi,yi in zip(x,y)]
 fx5 = lambda x,y,z : [xi / (yi + zi) for xi,yi,zi in zip(x,y,z)]
 fz_score = lambda x1,x2,x3,x4,x5 : 1.2*x1 + 1.4*x2 + 3.3*x3 + 0.6*x4 + x5
 alt_score = lambda x: 1000 if x > 3 else 650 if x > 1.8 else 300
