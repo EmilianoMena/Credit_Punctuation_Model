@@ -1,17 +1,30 @@
-# This file contains the functions created to do certain process or operations.
-# In this case the functions developed are separated on two parts of the project. First the data clean and
-# analysis, and then the model punctuation.
+# functions.py from project CREDIT_PUNCTUATION_MODEL created by Emiliano Mena González on 12/02/2024.
+# This file contains the functions created to do certain process or operations. In this case the functions 
+# developed are separated in two parts of the project. First they are the data cleaning and data analysis
+# functions, and then the model punctuation functions.
 
 ## Libraries and dependencies
 import pandas as pd
 import numpy as np
 import string
+import warnings
 
 ## Data Analysis and Data Cleaning
-def analyse_data(data: pd.DataFrame ='Dataset that will be analysed'):
+def analyse_data(data : pd.DataFrame):
     '''
-    The function returns information of the different variables that the dataset includes to proceed with
-    the data cleaning. The only parameter that the function asks for is the dataset declared as data.
+    The function returns information of every column of a dataset (Name of the variable, Type of the data,
+    Null values, Present values, Unique values)
+    
+    Parameters
+    ----------
+        data : pd.DataFrame
+            The dataset that will be analysed
+        
+    Returns
+    -------
+    pd.DataFrame
+        A dataset with the information of every column of the dataset entered
+        
     '''
     df = pd.DataFrame({
         'Variable_name':list(data.columns.values), # Name of the variable (column)
@@ -22,13 +35,24 @@ def analyse_data(data: pd.DataFrame ='Dataset that will be analysed'):
     }).set_index('Variable_name')
     return df
 
-def fill_info_same_customer(data: pd.DataFrame ='Dataset that will be analysed',
-                            id_var: str = 'Variable that identifies the person',
-                            fill_var: str = 'Variable that will be filled or replaced'):
+def fill_info_same_customer(data: pd.DataFrame , id_var: str , fill_var: str):
     '''
     The function fill the null values and replace the modified values with the information of the same
-    person. The parameters that the function needs are the dataset, the variable that identifies the person
-    and the variable that the values will be filled or replaced.
+    person
+    
+    Parameters
+    ----------
+        data : pd.DataFrame
+            The dataset that wants to be filled
+        id_var: str
+            Variable that identifies the person
+        fill_var: str
+            Variable that will be filled or replaced
+    
+    Returns
+    -------
+    list
+        A list with all the values present
     '''
     k = list(data[id_var].bfill())
     v = list(data[fill_var].bfill())
@@ -36,19 +60,38 @@ def fill_info_same_customer(data: pd.DataFrame ='Dataset that will be analysed',
     result = [c.get(x,0) for x in k]
     return result
 
-def fill_ceros(data: pd.DataFrame ='Dataset that will be analysed',
-               var: str = 'Variable that null values would be filled with 0'):
+def fill_ceros(data: pd.DataFrame , var: str):
     '''
-    The function fills the variables null values with 0. It has 2 parameters, first the dataset and second
-    the variable.
+    The function fills the variables null values with 0
+    Parameters
+    ----------
+        data : pd.DataFrame
+            The dataset that wants to be filled
+        var: str
+            Variable that null values will be replaced with 0
+    
+    Returns
+    -------
+    list
+        A list with all the values present
     '''
     result = data[var].fillna(0)
     return result
 
-def only_numbers(var: str = 'String that has a number'):
+def only_numbers(var: str):
     '''
     The function receives a string that contains numbers and punctuaction or other elements and returns
-    the only the number on float format. The only parameter is the string.
+    only the number on float format
+
+    Parameters
+    ----------
+        var : str
+            String that has a number
+    
+    Returns
+    -------
+    float
+        A float number
     '''
     try:
         var = ''.join(ch for ch in var if ch in string.digits+'.'+'-')
@@ -57,32 +100,141 @@ def only_numbers(var: str = 'String that has a number'):
     result = [float(0) if var=='' or var=='.' or var=='-' or var=='-.' else float(var)][0]
     return result
 
-def numeric_age(data: pd.DataFrame ='Dataset that contains the variable',
-                var: str = 'Variable of the age that will be converted to numeric'):
+def numeric_age(data: pd.DataFrame , var: str):
     '''
     The function converts the age from a format of NN Years to NN Months to numeric months. It receives the
-    dataset and the variable that has the age.
+    dataset and the variable that has the age
+    
+    Parameters
+    ----------
+        data : pd.DataFrame
+            The dataset that contains the variable
+        var: str
+            Variable of the age that will be converted to numeric
+    
+    Returns
+    -------
+    list
+        A list with all the ages in numeric (int) type
     '''
     result = [int(xi[0])*12 + int(xi[3]) for xi in [x.split() for x in data[var]]]
     return result
 
-## Punctuation functions
-### FICO model
-f1 = lambda x: 200 if x <= 3 else 150 if x <= 10 else 100 if x <= 30 else 75 if x <= 60 else 50 if x <= 90 else 25
-f2 = lambda x: 150 if x <= 1 else 120 if x <= 7 else 90 if x <= 13 else 60 if x <= 19 else 30
-f3 = lambda x: 300 if x <= 500 else 275 if x <= 1000 else 250 if x <= 1500 else 150 if x <= 2000 else 75 if x <= 2500 else 50 
-f4 = lambda x: 15 if x <= 24 else 30 if x <= 48 else 45 if x <= 72 else 60 if x <= 96 else 85 if x <=120 else 100
-f5 = lambda x: 150 if x == 'Good' else 75 if x == 'Standard' else 25
-f6 = lambda x: 100 if x <= 2 else 85 if x <= 6 else 60 if x <= 10 else 45 if x <= 14 else 30
-f7 = lambda x: 50 if x <= 50 else 0
-f8 = lambda x: 50 if x<= 30 else 0
-### Altman Z-score
-fx1 = lambda x,y,z : [xi / (yi + zi) for xi,yi,zi in zip(x,y,z)]
-fx2 = lambda x,y,z : [xi / (yi + zi) for xi,yi,zi in zip(x,y,z)]
-fx3 = lambda x,y,z : [xi / (yi + zi) for xi,yi,zi in zip(x,y,z)]
-fx4 = lambda x,y : [xi/ 12 / yi for xi,yi in zip(x,y)]
-fx5 = lambda x,y,z : [xi / (yi + zi) for xi,yi,zi in zip(x,y,z)]
-fz_score = lambda x1,x2,x3,x4,x5 : 1.2*x1 + 1.4*x2 + 3.3*x3 + 0.6*x4 + x5
-alt_score = lambda x: 1000 if x > 3 else 650 if x > 1.8 else 300
-### Final Score
-final_score = lambda x: 'Poor' if x < 600 else 'Standard' if x < 800 else 'Good' 
+## Punctuation Model
+def punctuation(scores: list, ranges: list, values: list, condition: int = 0):
+    """
+    This function receives the values of the variables selected and gives them a score based on the ranges 
+    entered considering the condition selected.  
+
+    Parameters
+    ----------
+        scores : list
+            All the scores that every value can get
+        ranges: list
+            The ranges on which every score will be assigned
+        values: list
+            The values of every variable selected
+        conditions: int
+            A flag used to select the type of if statement to evaluate if is in the range or not, 0 is '<=', 
+            1 is '==' and 2 is '>='
+    
+    Returns
+    -------
+    list
+        A list with all punctuations of a variable
+    """
+    if condition == 0:
+        result = [max([z if xi <= y else scores[-1] for z,y in zip(scores[:-1],ranges)]) for xi in values]
+    elif condition == 1:
+        result = [max([z if xi == y else scores[-1] for z,y in zip(scores[:-1],ranges)]) for xi in values]
+    elif condition == 2:
+        result = [max([z if xi >= y else scores[-1] for z,y in zip(scores[:-1],ranges)]) for xi in values]
+    else:
+        raise Warning("The condition options are 0 for <=, 1 for ==, 3 for >=!")
+    return result
+
+def final_punctuation(punctuations: list):
+    '''
+    This function receives the punctuations of every variable and gets back the final punctuation (sum all
+    of them)
+
+    Parameters
+    ----------
+        punctuations : list
+            List of lists that contain all the variables punctuation
+    
+    Returns
+    -------
+    list
+        A list with the final punctuation of every person
+    '''
+    result = [sum(x) for x in zip(*punctuations)]
+    return result
+
+def score(scores : list , ranges : list, punctuation : list):
+    '''
+    This function assign the final score to every punctuation
+    
+    Parameters
+    ----------
+        scores : list
+            The possible scores the model assign
+        ranges : list
+            The ranges in which every score is assigned
+        punctuation : list
+            The punctuations of every person
+    
+    Returns
+    -------
+    list
+        A list with the final score of every person
+    '''
+    result = [max([z if xi <= y else scores[-1] for z,y in zip(scores[:-1],ranges)]) for xi in punctuation]
+    return result
+
+def df_results(data: pd.DataFrame, punctuation: list, scores: list):
+    '''
+    This function returns a dataset that has the original scores, the model scores, the model punctuation
+    and some info of every person to know whose score it is
+    
+    Parameters
+    ----------
+        data : pd.DataFrame
+            Dataset with the all the information
+        punctuation : list
+            The model punctuation
+        scores : list
+            The model scores
+    
+    Returns
+    -------
+    pd.DataFrame
+        A dataset that includes the Customer_ID, Name, Model Punctuation, Model Score and Original Score
+    '''
+    result =  pd.DataFrame({
+        'Customer_ID': data['Customer_ID'],
+        'Name': data['Name'],
+        'Model_Punctuation': punctuation,
+        'Model_Score': scores,
+        'Original_Score': data['Credit_Score']
+        })
+    return result
+
+def accuracy(scores: list, data: pd.DataFrame):
+    '''
+    This function shows the model accuracy
+    
+    Parameters
+    ----------
+        scores : list
+            List of the model scores
+        data : pd.DataFrame
+            Dataset with the all the information
+    
+    Returns
+    -------
+    float
+        The accuracy expressed as a percentage (multiplied by 100)
+    '''
+    result = sum([1 if x==y else 0 for x,y in zip(scores,data['Credit_Score'])])/len(data)
+    return result
