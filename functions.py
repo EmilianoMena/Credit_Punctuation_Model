@@ -24,7 +24,6 @@ def analyse_data(data : pd.DataFrame):
     -------
     pd.DataFrame
         A dataset with the information of every column of the dataset entered
-        
     '''
     df = pd.DataFrame({
         'Variable_name':list(data.columns.values), # Name of the variable (column)
@@ -54,8 +53,8 @@ def fill_info_same_customer(data: pd.DataFrame , id_var: str , fill_var: str):
     list
         A list with all the values present
     '''
-    k = list(data[id_var].bfill())
-    v = list(data[fill_var].bfill())
+    k = list(data[id_var])
+    v = list(data[fill_var].ffill())
     c = {x:y for x,y in zip(k,v)}
     result = [c.get(x,0) for x in k]
     return result
@@ -122,7 +121,7 @@ def numeric_age(data: pd.DataFrame , var: str):
 
 ## Punctuation Model
 def punctuation(scores: list, ranges: list, values: list, condition: int = 0):
-    """
+    '''
     This function receives the values of the variables selected and gives them a score based on the ranges 
     entered considering the condition selected.  
 
@@ -142,7 +141,7 @@ def punctuation(scores: list, ranges: list, values: list, condition: int = 0):
     -------
     list
         A list with all punctuations of a variable
-    """
+    '''
     if condition == 0:
         result = [max([z if xi <= y else scores[-1] for z,y in zip(scores[:-1],ranges)]) for xi in values]
     elif condition == 1:

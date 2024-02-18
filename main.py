@@ -24,29 +24,23 @@ num_vars = ['Annual_Income','Num_of_Delayed_Payment','Changed_Credit_Limit','Out
 for var in num_vars: # Convert string numbers to float numbers
    df2[var] = [f.only_numbers(x) for x in df2[var]]
 df2['Credit_History_Age'] = f.numeric_age(data = df2, var = 'Credit_History_Age')# Get the number of months
-data_info_2 = f.analyse_data(df2) # Analyse to see if the data is ready
 
 ## Punctuation
-model_variables = ['Delay_from_due_date','Num_of_Delayed_Payment','Total_EMI_per_month', # Payment history 30%
-                   'Outstanding_Debt', # Amounts owed 20%
+model_variables = ['Delay_from_due_date','Num_of_Delayed_Payment',#'Total_EMI_per_month', # Payment history 30%
+                   'Outstanding_Debt', # Amounts owed 25%
                    'Credit_History_Age', # Lengh of credit history 15%
                    'Credit_Mix', # Credit mix 10%
-                   'Changed_Credit_Limit','Num_Credit_Inquiries', # New credit 15%
+                   'Changed_Credit_Limit','Num_Credit_Inquiries', # New credit 10%
                    'Credit_Utilization_Ratio'] # Credit utilization 10%
-scores = [[100,75,50,25,12.5],[100,80,60,40,20],[100,75,50,25,12.5],[200,185,165,100,50,35],
-          [22.5,45,67.5,90,127.5,150],[100,50,15],[75,63.75,45,33.75,22.5],[75,63.75,45,33.75,22.5],
-          [75,100,75,50,25,12.5]]
-ranges = [[3,10,30,60,90],[1,7,13,19],[500,1000,2000,3000],[500,1000,1500,2000,2500],[24,48,72,96,120],
-          ['Good','Standard'],[100,60,40,20],[2,6,10,14],[20,35,40,50,70]]
+data_stadistics = pd.DataFrame([df2[x].describe() for x in model_variables])
+scores = [[150,100,50,0],[150,100,50,0],[250,175,100,25,0],[50,60,80,100],[100,75,50],[50,40,30,20],[50,40,30,20,10],[50,100,50,0]]
+ranges = [[0,3,15],[0,5,10],[250,500,750,1000],[24,48,120,240],['Good','Standard'],[2,4,6],[3,6,9,12],[25,30,35]]
 conditions = [0,0,2,0,0,1,0,0,0]
 model_data = [df2[v].values for v in model_variables]
 variables_punctuation = [f.punctuation(s,r,m,c) for s,r,m,c in zip(scores,ranges,model_data,conditions)]
 model_punctuation = f.final_punctuation(variables_punctuation)
-model_score = f.score(['Poor','Standard','Good'], [300,800], model_punctuation)
+model_score = f.score(['Poor','Standard','Good'], [550,750], model_punctuation)
 results = f.df_results(df2, model_punctuation, model_score)
 accuracy = f.accuracy(model_score, df2)
 
-## Separe the data on train and test (No se si es necesario o no)
-# df_train = df.sample(frac=0.8)
-# df_test = df.drop(df_train.index)
-# Variables didn´t used ['Annual_Income','Monthly_Inhand_Salary','Interest_Rate','Amount_invested_monthly']
+#Variables didn´t used ['Annual_Income','Monthly_Inhand_Salary','Interest_Rate','Amount_invested_monthly']
