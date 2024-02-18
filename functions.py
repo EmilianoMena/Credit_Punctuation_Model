@@ -13,7 +13,7 @@ import warnings
 def analyse_data(data : pd.DataFrame):
     '''
     The function returns information of every column of a dataset (Name of the variable, Type of the data,
-    Null values, Present values, Unique values)
+    Null values, Present values and Unique values)
     
     Parameters
     ----------
@@ -93,7 +93,7 @@ def only_numbers(var: str):
         A float number
     '''
     try:
-        var = ''.join(ch for ch in var if ch in string.digits+'.'+'-')
+        var = ''.join(ch for ch in var if ch in string.digits+'.')
     except:
         pass
     result = [float(0) if var=='' or var=='.' or var=='-' or var=='-.' else float(var)][0]
@@ -118,6 +118,34 @@ def numeric_age(data: pd.DataFrame , var: str):
     '''
     result = [int(xi[0])*12 + int(xi[3]) for xi in [x.split() for x in data[var]]]
     return result
+
+def outliers_replace(data : pd.DataFrame, var : str, num_std : int = 1):
+   '''
+   This function detects and replaces the outliers with the previous value
+
+    Parameters
+    ----------
+        data : pd.DataFrame
+            The dataset that contains the variable
+        var: str
+            Variable that has outliers
+        num_std: int
+            Number of standard desviations that will be considered to count as a outlier. By default takes
+            1 standard desviation
+    
+    Returns
+    -------
+    list
+        A list with the original values and the replaced outliers
+   '''
+   mean = data[var].mean()
+   std = data[var].std()
+   low = mean - (num_std * std)
+   high = mean + (num_std * std)
+   outliers = data[(data[var]<low) | (data[var] > high)][var]
+   data[var] = data[var].replace(outliers.values,np.nan)
+   result = data[var].ffill()
+   return result
 
 ## Punctuation Model
 def punctuation(scores: list, ranges: list, values: list, condition: int = 0):
@@ -170,25 +198,34 @@ def final_punctuation(punctuations: list):
     result = [sum(x) for x in zip(*punctuations)]
     return result
 
-def score(scores : list , ranges : list, punctuation : list):
+def score(range1 : int, range2 : int, punctuation : int):
     '''
     This function assign the final score to every punctuation
     
     Parameters
     ----------
-        scores : list
-            The possible scores the model assign
-        ranges : list
-            The ranges in which every score is assigned
-        punctuation : list
-            The punctuations of every person
+        range1 : int
+            The first range is a number that will be compared with the punctuation, if the punctuation is 
+            under the range number the score will be Poor, if the punctuation is above the range number the
+            score will be Standard
+        range2 : int
+            The second range is a number that will be compared with the punctuation, if the punctuation is 
+            under the range number the score will be Standard, if the punctuation is above the range number 
+            the score will be Good
+        punctuation : int
+            The punctuation that a person got on the model
     
     Returns
     -------
-    list
-        A list with the final score of every person
+    str
+        The score of the given punctuation
     '''
-    result = [max([z if xi <= y else scores[-1] for z,y in zip(scores[:-1],ranges)]) for xi in punctuation]
+    if punctuation < 600:
+        result = 'Poor' 
+    elif punctuation < 800:
+        result = 'Standard' 
+    else:
+        result = 'Good'
     return result
 
 def df_results(data: pd.DataFrame, punctuation: list, scores: list):
