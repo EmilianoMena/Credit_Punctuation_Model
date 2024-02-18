@@ -3,17 +3,49 @@
 # the only visualization is going to be a confusion matrix.
 
 ## Libraries and dependencies
-from main import results
+from main import results, df2
 from sklearn import metrics
 import seaborn as sns
 import matplotlib.pyplot as plt
 
+## Violinplots
+def violinplots(x : list):
+    '''
+    Create a violin plot to see outliers on the data
+
+    Parameters
+    ----------
+        x : list
+            The data that will be plot
+        
+    Returns
+    -------
+    plt
+        The violin plot
+    '''
+    sns.violinplot(x)
+    plt.show()
+
 ## Confusion matrix
-original = results['Original_Score']
-model = results['Model_Score']
-confusion_matrix = metrics.confusion_matrix(original, model)
-heatmap = sns.heatmap(confusion_matrix, annot=True, fmt='g', xticklabels=['Poor', 'Standard','Good'], 
-                      yticklabels=['Poor', 'Standard','Good'])
-graph1 = plt.ylabel('Model',fontsize=13)
-graph1 = plt.xlabel('Original',fontsize=13)
-graph1 = plt.title('Confusion Matrix',fontsize=17)
+def heatmap(original : list, model : list, labels : list):
+    '''
+    Create a violin plot to see outliers on the data
+
+    Parameters
+    ----------
+        original : list
+            The original data
+        model : list
+            The predicted data
+        labels : list
+            The different categories in which they were predicted the data
+        
+    Returns
+    -------
+    plt
+        A heatmap plot
+    '''
+    confusion_matrix = metrics.confusion_matrix(original, model)
+    sns.heatmap(confusion_matrix, annot=True, fmt='g', xticklabels=labels, yticklabels=labels).set(
+        title='Confusion Matrix',xlabel='Original',ylabel='Model')
+    plt.show()
