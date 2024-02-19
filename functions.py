@@ -1,4 +1,5 @@
-# functions.py from project CREDIT_PUNCTUATION_MODEL created by Emiliano Mena González on 12/02/2024.
+# functions.py from project CREDIT_PUNCTUATION_MODEL created by Emiliano Mena González and Jorge Alberto
+# Hernández Hernández on 12/02/2024.
 # This file contains the functions created to do certain process or operations. In this case the functions 
 # developed are separated in two parts of the project. First they are the data cleaning and data analysis
 # functions, and then the model punctuation functions.

@@ -1,4 +1,5 @@
-# visualizations.py from project CREDIT_PUNCTUATION_MODEL created by Emiliano Mena González on 12/02/2024.
+# visualizations.py from project CREDIT_PUNCTUATION_MODEL created by Emiliano Mena González and Jorge Alberto
+# Hernández Hernández on 12/02/2024.
 # This file includes all the graphs and visual supports to present the results of the project. In this case
 # the only visualization is going to be a confusion matrix.
 

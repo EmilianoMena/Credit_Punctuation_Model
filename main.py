@@ -1,4 +1,5 @@
-# main.py from project CREDIT_PUNCTUATION_MODEL created by Emiliano Mena González on 12/02/2024.
+# main.py from project CREDIT_PUNCTUATION_MODEL created by Emiliano Mena González and Jorge Alberto 
+# Hernández Hernández on 12/02/2024.
 # This file includes all the proccess to get the expected results of the project. In this case we have the
 # application of the data cleaning and model punctuation functions developed on functions.py.
 
@@ -36,10 +37,10 @@ model_variables = ['Delay_from_due_date','Num_of_Delayed_Payment', # Payment his
                    'Credit_History_Age', # Lengh of credit history 10%
                    'Credit_Mix', # Credit mix 15%
                    'Num_Credit_Inquiries'] # New credit 10%
-scores = [[200,150,100,75,50,25],[150,120,90,60,30],[300,275,250,150,75,50],[15,30,45,60,85,100],[150,100,50],
-          [100,85,60,45,30]]
-ranges = [[3,10,30,60,90],[1,7,13,19],[500,1000,1500,2000,2500],[24,48,72,96,120],['Good','Standard'],
-          [2,6,10,14]]
+scores = [[200,150,100,75,50,25],[150,120,90,60,30],[300,275,250,150,75,50],[10,30,50,70,85,100],
+          [150,75,25],[100,85,60,45,30]]
+ranges = [[3,5,15,30,60],[0,7,13,19],[500,1000,1500,2000,2500],[24,48,72,96,120],['Good','Standard'],
+          [3,6,10,20]]
 conditions = [0,0,0,0,1,0]
 model_data = [df3[v].values for v in model_variables]
 variables_punctuation = [f.punctuation(s,r,m,c) for s,r,m,c in zip(scores,ranges,model_data,conditions)]
